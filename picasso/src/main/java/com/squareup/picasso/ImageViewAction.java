@@ -58,7 +58,7 @@ class ImageViewAction extends Action<ImageView> {
     PicassoDrawable.setBitmap(target, context, result, from, noFade, indicatorsEnabled);
 
     if (getCallback(callback, callbackRef) != null) {
-      getCallback(callback, callbackRef).onSuccess();
+      getCallback(callback, callbackRef).onSuccess(target);
     }
   }
 
@@ -73,9 +73,9 @@ class ImageViewAction extends Action<ImageView> {
       target.setImageDrawable(errorDrawable);
     }
 
-      Callback realCallback = getCallback(callback, callbackRef);
-      if (realCallback != null) {
-      realCallback.onError();
+    Callback realCallback = getCallback(callback, callbackRef);
+    if (realCallback != null) {
+      realCallback.onError(target);
     }
   }
 

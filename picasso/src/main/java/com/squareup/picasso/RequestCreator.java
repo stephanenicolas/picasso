@@ -550,9 +550,10 @@ public class RequestCreator {
         if (picasso.loggingEnabled) {
           log(OWNER_MAIN, VERB_COMPLETED, request.plainId(), "from " + MEMORY);
         }
-          Callback realCallback = getCallback(callback, callbackRef);
-          if (realCallback != null) {
-          realCallback.onSuccess();
+
+        Callback realCallback = getCallback(callback, callbackRef);
+        if (realCallback != null) {
+          realCallback.onSuccess(target);
         }
         return;
       }
