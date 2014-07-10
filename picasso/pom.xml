@@ -12,6 +12,7 @@
 
   <artifactId>picasso</artifactId>
   <name>Picasso</name>
+  <version>2.3.3.GRPN.1-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
