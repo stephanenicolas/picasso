@@ -122,18 +122,20 @@ public class Picasso {
   final Map<Object, Action> targetToAction;
   final Map<ImageView, DeferredRequestCreator> targetToDeferredRequestCreator;
   final ReferenceQueue<Object> referenceQueue;
+  final Cache diskCache;
 
   boolean indicatorsEnabled;
   volatile boolean loggingEnabled;
 
   boolean shutdown;
 
-  Picasso(Context context, Dispatcher dispatcher, Cache cache, Listener listener,
+  Picasso(Context context, Dispatcher dispatcher, Cache cache, Cache diskCache, Listener listener,
       RequestTransformer requestTransformer, Stats stats, boolean indicatorsEnabled,
       boolean loggingEnabled) {
     this.context = context;
     this.dispatcher = dispatcher;
     this.cache = cache;
+    this.diskCache = diskCache;
     this.listener = listener;
     this.requestTransformer = requestTransformer;
     this.stats = stats;
@@ -144,6 +146,13 @@ public class Picasso {
     this.referenceQueue = new ReferenceQueue<Object>();
     this.cleanupThread = new CleanupThread(referenceQueue, HANDLER);
     this.cleanupThread.start();
+  }
+
+  Picasso(Context context, Dispatcher dispatcher, Cache cache, Listener listener,
+      RequestTransformer requestTransformer, Stats stats, boolean indicatorsEnabled,
+      boolean loggingEnabled) {
+    this(context, dispatcher, cache, null, listener, requestTransformer, stats, indicatorsEnabled,
+        loggingEnabled);
   }
 
   /** Cancel any existing requests for the specified target {@link ImageView}. */
@@ -484,6 +493,7 @@ public class Picasso {
     private Downloader downloader;
     private ExecutorService service;
     private Cache cache;
+    private Cache diskCache;
     private Listener listener;
     private RequestTransformer transformer;
 
@@ -531,6 +541,15 @@ public class Picasso {
         throw new IllegalStateException("Memory cache already set.");
       }
       this.cache = memoryCache;
+      return this;
+    }
+
+    /** Specify the disk cache used for the most recent images. Can be null (default).*/
+    public Builder diskCache(Cache diskCache) {
+      if (this.diskCache != null) {
+        throw new IllegalStateException("Disk cache already set.");
+      }
+      this.diskCache = diskCache;
       return this;
     }
 
@@ -609,7 +628,7 @@ public class Picasso {
 
       Dispatcher dispatcher = new Dispatcher(context, service, HANDLER, downloader, cache, stats);
 
-      return new Picasso(context, dispatcher, cache, listener, transformer, stats,
+      return new Picasso(context, dispatcher, cache, diskCache, listener, transformer, stats,
           indicatorsEnabled, loggingEnabled);
     }
   }
@@ -617,6 +636,7 @@ public class Picasso {
   /** Describes where the image was loaded from. */
   public enum LoadedFrom {
     MEMORY(Color.GREEN),
+    DISK_CACHE(Color.BLUE),
     DISK(Color.YELLOW),
     NETWORK(Color.RED);
 
