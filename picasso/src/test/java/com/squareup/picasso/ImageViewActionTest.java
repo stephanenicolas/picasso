@@ -139,10 +139,10 @@ public class ImageViewActionTest {
       Callback callback = mockCallback();
       Picasso mock = mock(Picasso.class);
       ImageViewAction request1 =
-              new ImageViewAction(mock, target1, null, false, false, -1, null, null, callback);
+              new ImageViewAction(mock, target1, null, false, false, -1, null, null, null, callback);
       request1.error();
       ImageViewAction request2 =
-              new ImageViewAction(mock, target2, null, false, false, -1, null, null, callback);
+              new ImageViewAction(mock, target2, null, false, false, -1, null, null, null, callback);
       request1.error();
       request2.error();
       ArgumentCaptor<ImageView> argument = ArgumentCaptor.forClass(ImageView.class);
